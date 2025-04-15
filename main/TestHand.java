@@ -23,7 +23,7 @@ public class TestHand {
     private static void testRoyalStraight() {
         System.out.println("Test: Royal Straight (A, 10, J, Q, K)");
         List<HeldHand.Card> cards = List.of(
-            newCard(1, "Spades"),
+            newCard(4, "Spades"),
             newCard(10, "Spades"),
             newCard(11, "Spades"),
             newCard(12, "Spades"),
@@ -88,7 +88,7 @@ public class TestHand {
     private static void testFourOfAKind() {
         System.out.println("Test: Four of a Kind (4x King)");
         List<HeldHand.Card> cards = List.of(
-            newCard(13, "Spades"),
+            newCard(12, "Spades"),
             newCard(13, "Clubs"),
             newCard(13, "Hearts"),
             newCard(13, "Diamonds"),
@@ -116,7 +116,7 @@ public class TestHand {
         List<HeldHand.Card> cards = List.of(
             newCard(8, "Hearts"),
             newCard(8, "Clubs"),
-            newCard(8, "Spades"),
+            newCard(7, "Spades"),
             newCard(5, "Diamonds"),
             newCard(2, "Hearts")
         );

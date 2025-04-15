@@ -1,12 +1,15 @@
 import java.util.*;
 
+// Utility class for evaluating 5-card poker hands
 public class HandEvaluator {
 
+	// Evaluates a hand and returns a detailed HandResult
 	public static HandResult evaluateHandDetailed(List<HeldHand.Card> cards) {
-		Map<Integer, Integer> rankCounts = new HashMap<>();
-		Map<String, Integer> suitCounts = new HashMap<>();
-		List<Integer> ranks = new ArrayList<>();
+		Map<Integer, Integer> rankCounts = new HashMap<>();   // Rank → frequency (e.g., 10 → 3)
+		Map<String, Integer> suitCounts = new HashMap<>();    // Suit → frequency (e.g., "Hearts" → 5)
+		List<Integer> ranks = new ArrayList<>();              // All ranks in the hand
 
+		// Count occurrences of each rank and suit
 		for (HeldHand.Card card : cards) {
 			int rank = card.getRank();
 			String suit = card.getSuit();
@@ -16,11 +19,14 @@ public class HandEvaluator {
 		}
 
 		int rankBonus = 0;
-		Collections.sort(ranks);
-		boolean isFlush = suitCounts.containsValue(5);
-		boolean isStraight = isSequential(ranks);
-		boolean isRoyal = ranks.equals(Arrays.asList(1, 10, 11, 12, 13));
+		Collections.sort(ranks);                        // Sort for straight detection
+		boolean isFlush = suitCounts.containsValue(5);  // All cards same suit?
+		boolean isStraight = isSequential(ranks);       // Ranks form a sequence?
+		boolean isRoyal = ranks.equals(Arrays.asList(1, 10, 11, 12, 13));  // A,10,J,Q,K?
 
+		// === Evaluate Hand Type ===
+
+		// Royal Flush
 		if (isFlush && isRoyal) {
 			rankBonus = cards.stream()
 				.filter(c -> Arrays.asList(1, 10, 11, 12, 13).contains(c.getRank()))
@@ -29,6 +35,7 @@ public class HandEvaluator {
 			return new HandResult("Royal Flush", 100, 8, rankBonus);
 		}
 
+		// Straight Flush
 		if (isFlush && isStraight) {
 			rankBonus = cards.stream()
 				.mapToInt(HeldHand.Card::getScore)
@@ -36,6 +43,7 @@ public class HandEvaluator {
 			return new HandResult("Straight Flush", 100, 8, rankBonus);
 		}
 
+		// Four of a Kind
 		for (Map.Entry<Integer, Integer> entry : rankCounts.entrySet()) {
 			if (entry.getValue() == 4) {
 				int rank = entry.getKey();
@@ -47,6 +55,7 @@ public class HandEvaluator {
 			}
 		}
 
+		// Full House (3 of a kind + a pair)
 		if (rankCounts.containsValue(3) && rankCounts.containsValue(2)) {
 			int bonus = cards.stream()
 				.filter(c -> rankCounts.get(c.getRank()) == 3 || rankCounts.get(c.getRank()) == 2)
@@ -55,6 +64,7 @@ public class HandEvaluator {
 			return new HandResult("Full House", 40, 4, bonus);
 		}
 
+		// Flush
 		if (isFlush) {
 			String flushSuit = suitCounts.entrySet().stream()
 				.filter(e -> e.getValue() >= 5)
@@ -68,6 +78,7 @@ public class HandEvaluator {
 			return new HandResult("Flush", 40, 4, rankBonus);
 		}
 
+		// Straight
 		if (isStraight) {
 			rankBonus = cards.stream()
 				.mapToInt(HeldHand.Card::getScore)
@@ -75,11 +86,13 @@ public class HandEvaluator {
 			return new HandResult("Straight", 30, 4, rankBonus);
 		}
 		
+		// Special case: Royal but not a flush → treat as regular straight
 		if (isRoyal && !isFlush) {
 			rankBonus = cards.stream().mapToInt(HeldHand.Card::getScore).sum();
 			return new HandResult("Straight", 30, 4, rankBonus);
 		}
 
+		// Three of a Kind
 		for (Map.Entry<Integer, Integer> entry : rankCounts.entrySet()) {
 			if (entry.getValue() == 3) {
 				int rank = entry.getKey();
@@ -91,6 +104,7 @@ public class HandEvaluator {
 			}
 		}
 
+		// Two Pair
 		long pairCount = rankCounts.values().stream().filter(count -> count == 2).count();
 		if (pairCount >= 2) {
 			rankBonus = cards.stream()
@@ -100,6 +114,7 @@ public class HandEvaluator {
 			return new HandResult("Two Pair", 20, 2, rankBonus);
 		}
 
+		// One Pair
 		if (pairCount == 1) {
 			rankBonus = cards.stream()
 				.filter(c -> rankCounts.get(c.getRank()) == 2)
@@ -108,6 +123,7 @@ public class HandEvaluator {
 			return new HandResult("One Pair", 5, 1, rankBonus);
 		}
 
+		// High Card (no matches)
 		if (pairCount == 0) {
 			rankBonus = cards.stream()
 				.mapToInt(HeldHand.Card::getScore)
@@ -116,30 +132,34 @@ public class HandEvaluator {
 			return new HandResult("High Card", 10, 1, rankBonus);
 		}
 
-		return new HandResult("Unknown", 0, 1, 0); // fallback
+		// Should not reach here, fallback
+		return new HandResult("Unknown", 0, 1, 0);
 	}
 
+	// Helper to check if ranks are sequential (i.e., a straight)
 	public static boolean isSequential(List<Integer> ranks) {
-		Set<Integer> uniqueRanks = new HashSet<>(ranks);
+		Set<Integer> uniqueRanks = new HashSet<>(ranks); // Avoid duplicates
 		if (uniqueRanks.size() != 5) return false;
 
 		Collections.sort(ranks);
 
-		// handle Ace-low straight
+		// Special case: Ace-low straight (A,2,3,4,5)
 		if (ranks.equals(Arrays.asList(1, 2, 3, 4, 5))) return true;
 
+		// Check if difference between ranks is always 1
 		for (int i = 0; i < ranks.size() - 1; i++) {
 			if (ranks.get(i + 1) - ranks.get(i) != 1) return false;
 		}
 		return true;
 	}
 
+	// Class to hold detailed result of hand evaluation
 	public static class HandResult {
-		public final String name;
-		public final int chips;
-		public final int multiplier;
-		public final int rankBonus;
-		public final int totalScore;
+		public final String name;         // Hand type (e.g., "Flush")
+		public final int chips;          // Base point value
+		public final int multiplier;     // Multiplier for score
+		public final int rankBonus;      // Sum of rank values involved
+		public final int totalScore;     // Final score = (chips + bonus) * multiplier
 
 		public HandResult(String name, int chips, int multiplier, int rankBonus) {
 			this.name = name;
