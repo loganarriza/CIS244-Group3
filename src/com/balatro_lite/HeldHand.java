@@ -23,22 +23,21 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 
-// Main class extending JavaFX's Application class
 public class HeldHand extends Application {
 
 	// Path to card images (local directory)
 	private static final String imageDir = "file:/C:/Users/logan/Downloads/image";
 
-	// Deck of card IDs (1-52)
+	// card deck IDs (1-52)
 	private List<Integer> deck = new ArrayList<>();
 	private int totalScore = 0;
 
-	// Stores selected card images for actions like discard/evaluate
+	// stores selected card images for actions like discard/play hand
 	private final Set<ImageView> selectedImages = new HashSet<>();
-	// Stores current card IDs displayed on screen
+	// stores current card IDs displayed on screen
 	private final List<Integer> currentCardIds = new ArrayList<>();
 
-	// Game state variables
+	// game state variables
 	private int discardsRemaining = 3;
 	private int handsRemaining = 4;
 	private int currentRound = 1;
@@ -79,12 +78,12 @@ public class HeldHand extends Application {
 
 		// ------------------ GAME UI SETUP ------------------
 
-		// Labels for score, hand and blind display
+		// labels for score, hand and blind display
 		scoreLabel = new Label("Score: 0");
 		turnsLabel = new Label("Hands Left: 4 | Discards Left: 3");
 		blindLabel = new Label("Blind: 300");
 
-		// Center-aligned top text area
+		// center-aligned top text area
 		lblGameTitle = new TextFlow();
 		lblGameTitle.setStyle("-fx-font-size: 14pt;");
 
@@ -92,7 +91,7 @@ public class HeldHand extends Application {
 		cardBox = new HBox(4);
 		cardBox.setAlignment(Pos.CENTER);
 
-		// Create 8 card image slots, default to card back image
+		// create 8 card image slots, default to card back image
 		imageViews = new ImageView[8];
 		for (int i = 0; i < imageViews.length; i++) {
 			imageViews[i] = new ImageView(getImageCover());
@@ -100,7 +99,7 @@ public class HeldHand extends Application {
 			imageViews[i].setFitHeight(96);
 			cardBox.getChildren().add(imageViews[i]);
 
-			// Add click event to allow selection/deselection of cards
+			// add click event to allow selection/deselection of cards
 			ImageView img = imageViews[i];
 			img.setOnMouseClicked(e -> {
 				if (selectedImages.contains(img)) {
@@ -112,22 +111,22 @@ public class HeldHand extends Application {
 					img.setStyle("-fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);");
 					img.setTranslateY(-20);
 				}
-				// Live preview of hand result for current selection
+				// live preview of hand result for current selection
 				evaluateCurrentSelection(lblGameTitle, currentCardIds, cardBox);
 			});
 		}
 
-		// Action buttons
+		// action buttons
 		btnShow = new Button("Show");
 		btnEvaluate = new Button("Evaluate");
 		btnDiscard = new Button("Discard");
 
-		// Event listeners for each action button
+		// event listeners for each action button
 		btnShow.setOnAction(e -> dealNewHand());
 		btnEvaluate.setOnAction(e -> evaluateSelectedCards());
 		btnDiscard.setOnAction(e -> discardSelectedCards());
 
-		// Layouts
+		// layouts
 		HBox buttonBox = new HBox(10, btnEvaluate, btnDiscard);
 		VBox topBox = new VBox(lblGameTitle, scoreLabel, blindLabel, turnsLabel);
 		BorderPane cardPane = new BorderPane();
@@ -138,14 +137,14 @@ public class HeldHand extends Application {
 		cardScene = new Scene(cardPane, 800, 400);
 	}
 
-	// Resets and shuffles the full 52-card deck
+	// resets and shuffles the full 52-card deck
 	private void resetDeck() {
 		deck.clear();
 		for (int i = 1; i <= 52; i++) deck.add(i);
 		Collections.shuffle(deck);
 	}
 
-	// Deals 8 new cards to the player
+	// deals 8 new cards to the player
 	private void dealNewHand() {
 		if (deck.size() < 8) {
 			lblGameTitle.getChildren().setAll(new Text("Deck is out of cards!"));
@@ -165,7 +164,7 @@ public class HeldHand extends Application {
 		selectedImages.clear();
 	}
 
-	// Evaluates the selected 5 cards and scores the hand
+	// evaluates the selected 5 cards and scores the hand
 	private void evaluateSelectedCards() {
 		if (selectedImages.isEmpty()) {
 			lblGameTitle.getChildren().setAll(new Text("Please select 5 cards."));
@@ -297,36 +296,38 @@ public class HeldHand extends Application {
 		launch(args);
 	}
 
-	// Nested class to represent a single playing card
 	public static class Card {
-		public final int cardId;
+	    private int rank;
+	    private String suit;
+	    private int score;
+	    private boolean disabled = false;
 
-		public Card(int cardId) {
-			this.cardId = cardId;
-		}
+	    public Card(int rank, String suit, int score) {
+	        this.rank = rank;
+	        this.suit = suit;
+	        this.score = score;
+	    }
 
-		// 1–13 (Ace to King)
-		public int getRank() {
-			return (cardId - 1) % 13 + 1;
-		}
+	    public void disable() {
+	        this.disabled = true;
+	    }
 
-		// Suit based on cardId
-		public String getSuit() {
-			switch ((cardId - 1) / 13) {
-				case 0: return "Spades";
-				case 1: return "Hearts";
-				case 2: return "Diamonds";
-				case 3: return "Clubs";
-				default: return "Unknown";
-			}
-		}
+	    public boolean isDisabled() {
+	        return disabled;
+	    }
 
-		// Get score based on Blackjack-like rules
-		public int getScore() {
-			int rank = getRank();
-			if (rank == 1) return 11;             // Ace
-			if (rank >= 11 && rank <= 13) return 10; // Face cards
-			return rank;
-		}
+	    // Add a toString override for debug purposes
+	    @Override
+	    public String toString() {
+	        return rank + " of " + suit + " (Score: " + score + ", Disabled: " + disabled + ")";
+	    }
+
+	    // Getters & setters
+	    public int getRank() { return rank; }
+	    public String getSuit() { return suit; }
+	    public int getScore() { return score; }
+
+	    public void setScore(int score) { this.score = score; }
+	    public void setRank(int rank) { this.rank = rank; }
 	}
 }

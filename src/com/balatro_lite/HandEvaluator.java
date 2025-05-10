@@ -1,178 +1,185 @@
 package com.balatro_lite;
 import java.util.*;
+import java.util.stream.Collectors;
 
 // Utility class for evaluating 5-card poker hands
 public class HandEvaluator {
 
-	// Evaluates a hand and returns a detailed HandResult
-	public static HandResult evaluateHandDetailed(List<HeldHand.Card> cards) {
-		Map<Integer, Integer> rankCounts = new HashMap<>();   // Rank → frequency (e.g., 10 → 3)
-		Map<String, Integer> suitCounts = new HashMap<>();    // Suit → frequency (e.g., "Hearts" → 5)
-		List<Integer> ranks = new ArrayList<>();              // All ranks in the hand
+    public static HandResult evaluateHandDetailed(List<HeldHand.Card> cards) {
+    	Map<Integer, Integer> rankCounts = new HashMap<>();
+        Map<String, Integer> suitCounts = new HashMap<>();
+        List<Integer> ranks = new ArrayList<>();
 
-		// Count occurrences of each rank and suit
-		for (HeldHand.Card card : cards) {
-			int rank = card.getRank();
-			String suit = card.getSuit();
-			rankCounts.put(rank, rankCounts.getOrDefault(rank, 0) + 1);
-			suitCounts.put(suit, suitCounts.getOrDefault(suit, 0) + 1);
-			ranks.add(rank);
-		}
+        // Ignore disabled cards
+        List<HeldHand.Card> usableCards = cards;
 
-		int rankBonus = 0;
-		Collections.sort(ranks);                        // Sort for straight detection
-		boolean isFlush = suitCounts.containsValue(5);  // All cards same suit?
-		boolean isStraight = isSequential(ranks);       // Ranks form a sequence?
-		boolean isRoyal = ranks.equals(Arrays.asList(1, 10, 11, 12, 13));  // A,10,J,Q,K?
+        System.out.println("🧠 Evaluating cards:");
+        for (HeldHand.Card card : usableCards) {
+            System.out.println(" - " + card);
+        }
+        
+        for (HeldHand.Card card : usableCards) {
+        	
+        	int rank = card.getRank();
+        		
+            String suit = card.getSuit();
+            rankCounts.put(rank, rankCounts.getOrDefault(rank, 0) + 1);
+            suitCounts.put(suit, suitCounts.getOrDefault(suit, 0) + 1);
+            
+            if (card.isDisabled()) {
+        		System.out.print("YOU ARE NOW HERE RANK THING");
+        		rank = 0;
+        	}
+            
+            ranks.add(rank);
+        }
 
-		// === Evaluate Hand Type ===
+        int rankBonus = 0;
+        Collections.sort(ranks);
+        boolean isFlush = suitCounts.containsValue(5);
+        boolean isStraight = isSequential(ranks);
+        boolean isRoyal = ranks.equals(Arrays.asList(1, 10, 11, 12, 13));
 
-		// Royal Flush
-		if (isFlush && isRoyal) {
-			rankBonus = cards.stream()
-				.filter(c -> Arrays.asList(1, 10, 11, 12, 13).contains(c.getRank()))
-				.mapToInt(HeldHand.Card::getScore)
-				.sum();
-			return new HandResult("Royal Flush", 100, 8, rankBonus);
-		}
+        // === Hand Evaluation ===
 
-		// Straight Flush
-		if (isFlush && isStraight) {
-			rankBonus = cards.stream()
-				.mapToInt(HeldHand.Card::getScore)
-				.sum();
-			return new HandResult("Straight Flush", 100, 8, rankBonus);
-		}
+        if (isFlush && isRoyal) {
+            rankBonus = usableCards.stream()
+                .filter(c -> Arrays.asList(1, 10, 11, 12, 13).contains(c.getRank()))
+                .mapToInt(HeldHand.Card::getScore)
+                .sum();
+            return new HandResult("Royal Flush", 100, 8, rankBonus);
+        }
 
-		// Four of a Kind
-		for (Map.Entry<Integer, Integer> entry : rankCounts.entrySet()) {
-			if (entry.getValue() == 4) {
-				int rank = entry.getKey();
-				rankBonus = cards.stream()
-					.filter(c -> c.getRank() == rank)
-					.mapToInt(HeldHand.Card::getScore)
-					.sum();
-				return new HandResult("Four of a Kind", 60, 7, rankBonus);
-			}
-		}
+        if (isFlush && isStraight) {
+            rankBonus = usableCards.stream()
+                .mapToInt(HeldHand.Card::getScore)
+                .sum();
+            return new HandResult("Straight Flush", 100, 8, rankBonus);
+        }
 
-		// Full House (3 of a kind + a pair)
-		if (rankCounts.containsValue(3) && rankCounts.containsValue(2)) {
-			int bonus = cards.stream()
-				.filter(c -> rankCounts.get(c.getRank()) == 3 || rankCounts.get(c.getRank()) == 2)
-				.mapToInt(HeldHand.Card::getScore)
-				.sum();
-			return new HandResult("Full House", 40, 4, bonus);
-		}
+        for (Map.Entry<Integer, Integer> entry : rankCounts.entrySet()) {
+            if (entry.getValue() == 4) {
+                int rank = entry.getKey();
+                rankBonus = usableCards.stream()
+                    .filter(c -> c.getRank() == rank)
+                    .mapToInt(HeldHand.Card::getScore)
+                    .sum();
+                return new HandResult("Four of a Kind", 60, 7, rankBonus);
+            }
+        }
 
-		// Flush
-		if (isFlush) {
-			String flushSuit = suitCounts.entrySet().stream()
-				.filter(e -> e.getValue() >= 5)
-				.map(Map.Entry::getKey)
-				.findFirst().orElse("Unknown");
+        if (rankCounts.containsValue(3) && rankCounts.containsValue(2)) {
+            int tripleRank = rankCounts.entrySet().stream()
+                .filter(e -> e.getValue() == 3)
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(0);
 
-			rankBonus = cards.stream()
-				.filter(c -> c.getSuit().equals(flushSuit))
-				.mapToInt(HeldHand.Card::getScore)
-				.sum();
-			return new HandResult("Flush", 40, 4, rankBonus);
-		}
+            int pairRank = rankCounts.entrySet().stream()
+                .filter(e -> e.getValue() == 2)
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(0);
 
-		// Straight
-		if (isStraight) {
-			rankBonus = cards.stream()
-				.mapToInt(HeldHand.Card::getScore)
-				.sum();
-			return new HandResult("Straight", 30, 4, rankBonus);
-		}
-		
-		// Special case: Royal but not a flush → treat as regular straight
-		if (isRoyal && !isFlush) {
-			rankBonus = cards.stream().mapToInt(HeldHand.Card::getScore).sum();
-			return new HandResult("Straight", 30, 4, rankBonus);
-		}
+            rankBonus = usableCards.stream()
+                .filter(c -> c.getRank() == tripleRank || c.getRank() == pairRank)
+                .mapToInt(HeldHand.Card::getScore)
+                .sum();
 
-		// Three of a Kind
-		for (Map.Entry<Integer, Integer> entry : rankCounts.entrySet()) {
-			if (entry.getValue() == 3) {
-				int rank = entry.getKey();
-				rankBonus = cards.stream()
-					.filter(c -> c.getRank() == rank)
-					.mapToInt(HeldHand.Card::getScore)
-					.sum();
-				return new HandResult("Three of a Kind", 30, 3, rankBonus);
-			}
-		}
+            return new HandResult("Full House", 40, 4, rankBonus);
+        }
 
-		// Two Pair
-		long pairCount = rankCounts.values().stream().filter(count -> count == 2).count();
-		if (pairCount >= 2) {
-			rankBonus = cards.stream()
-				.filter(c -> rankCounts.get(c.getRank()) == 2)
-				.mapToInt(HeldHand.Card::getScore)
-				.sum();
-			return new HandResult("Two Pair", 20, 2, rankBonus);
-		}
+        if (isFlush) {
+            String flushSuit = suitCounts.entrySet().stream()
+                .filter(e -> e.getValue() >= 5)
+                .map(Map.Entry::getKey)
+                .findFirst().orElse("Unknown");
 
-		// One Pair
-		if (pairCount == 1) {
-			rankBonus = cards.stream()
-				.filter(c -> rankCounts.get(c.getRank()) == 2)
-				.mapToInt(HeldHand.Card::getScore)
-				.sum();
-			return new HandResult("One Pair", 5, 1, rankBonus);
-		}
+            rankBonus = usableCards.stream()
+                .filter(c -> c.getSuit().equals(flushSuit))
+                .mapToInt(HeldHand.Card::getScore)
+                .sum();
+            return new HandResult("Flush", 40, 4, rankBonus);
+        }
 
-		// High Card (no matches)
-		if (pairCount == 0) {
-			rankBonus = cards.stream()
-				.mapToInt(HeldHand.Card::getScore)
-				.max()
-				.orElse(0);
-			return new HandResult("High Card", 10, 1, rankBonus);
-		}
+        if (isStraight) {
+            rankBonus = usableCards.stream()
+                .mapToInt(HeldHand.Card::getScore)
+                .sum();
+            return new HandResult("Straight", 30, 4, rankBonus);
+        }
 
-		// Should not reach here, fallback
-		return new HandResult("Unknown", 0, 1, 0);
-	}
+        if (isRoyal && !isFlush) {
+            rankBonus = usableCards.stream().mapToInt(HeldHand.Card::getScore).sum();
+            return new HandResult("Straight", 30, 4, rankBonus);
+        }
 
-	// Helper to check if ranks are sequential (i.e., a straight)
-	public static boolean isSequential(List<Integer> ranks) {
-		Set<Integer> uniqueRanks = new HashSet<>(ranks); // Avoid duplicates
-		if (uniqueRanks.size() != 5) return false;
+        for (Map.Entry<Integer, Integer> entry : rankCounts.entrySet()) {
+            if (entry.getValue() == 3) {
+                int rank = entry.getKey();
+                rankBonus = usableCards.stream()
+                    .filter(c -> c.getRank() == rank)
+                    .mapToInt(HeldHand.Card::getScore)
+                    .sum();
+                return new HandResult("Three of a Kind", 30, 3, rankBonus);
+            }
+        }
 
-		Collections.sort(ranks);
+        long pairCount = rankCounts.values().stream().filter(count -> count == 2).count();
 
-		// Special case: Ace-low straight (A,2,3,4,5)
-		if (ranks.equals(Arrays.asList(1, 2, 3, 4, 5))) return true;
+        if (pairCount >= 2) {
+            rankBonus = usableCards.stream()
+                .filter(c -> rankCounts.get(c.getRank()) == 2)
+                .mapToInt(HeldHand.Card::getScore)
+                .sum();
+            return new HandResult("Two Pair", 20, 2, rankBonus);
+        }
 
-		// Check if difference between ranks is always 1
-		for (int i = 0; i < ranks.size() - 1; i++) {
-			if (ranks.get(i + 1) - ranks.get(i) != 1) return false;
-		}
-		return true;
-	}
+        if (pairCount == 1) {
+            rankBonus = usableCards.stream()
+                .filter(c -> rankCounts.get(c.getRank()) == 2)
+                .mapToInt(HeldHand.Card::getScore)
+                .sum();
+            return new HandResult("One Pair", 10, 2, rankBonus);
+        }
 
-	// Class to hold detailed result of hand evaluation
-	public static class HandResult {
-		public final String name;         // Hand type (e.g., "Flush")
-		public final int chips;          // Base point value
-		public final int multiplier;     // Multiplier for score
-		public final int rankBonus;      // Sum of rank values involved
-		public final int totalScore;     // Final score = (chips + bonus) * multiplier
+        rankBonus = usableCards.stream()
+            .mapToInt(HeldHand.Card::getScore)
+            .max()
+            .orElse(0);
+        return new HandResult("High Card", 5, 1, rankBonus);
+    }
 
-		public HandResult(String name, int chips, int multiplier, int rankBonus) {
-			this.name = name;
-			this.chips = chips;
-			this.multiplier = multiplier;
-			this.rankBonus = rankBonus;
-			this.totalScore = (chips + rankBonus) * multiplier;
-		}
+    public static boolean isSequential(List<Integer> ranks) {
+        Set<Integer> uniqueRanks = new HashSet<>(ranks);
+        if (uniqueRanks.size() != 5) return false;
 
-		@Override
-		public String toString() {
-			return name + " (" + chips + " + " + rankBonus + ") × " + multiplier + " = " + totalScore;
-		}
-	}
+        Collections.sort(ranks);
+
+        if (ranks.equals(Arrays.asList(1, 2, 3, 4, 5))) return true;
+
+        for (int i = 0; i < ranks.size() - 1; i++) {
+            if (ranks.get(i + 1) - ranks.get(i) != 1) return false;
+        }
+        return true;
+    }
+
+    public static class HandResult {
+        public final String name;
+        public final int chips;
+        public final int multiplier;
+        public final int rankBonus;
+        public final int totalScore;
+
+        public HandResult(String name, int chips, int multiplier, int rankBonus) {
+            this.name = name;
+            this.chips = chips;
+            this.multiplier = multiplier;
+            this.rankBonus = rankBonus;
+            this.totalScore = (chips + rankBonus) * multiplier;
+        }
+
+        @Override
+        public String toString() {
+            return name + " (" + chips + " + " + rankBonus + ") × " + multiplier + " = " + totalScore;
+        }
+    }
 }

@@ -1,31 +1,312 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="cardPane">
-    <top>
-        <VBox spacing="5">
-            <TextFlow fx:id="lblGameTitle" />
-            <Label fx:id="scoreLabel" text="Score: 0"/>
-            <Label fx:id="blindLabel" text="Blind: 300"/>
-            <Label fx:id="turnsLabel" text="Hands Left: 4 | Discards Left: 3"/>
-        </VBox>
-    </top>
-
-    <center>
-        <HBox fx:id="cardBox" spacing="4" alignment="CENTER"/>
-    </center>
-
-    <bottom>
-        <HBox spacing="10" alignment="CENTER">
-            <Button fx:id="btnShow" text="Show"/>
-            <Button fx:id="btnEvaluate" text="Evaluate"/>
-            <Button fx:id="btnDiscard" text="Discard"/>
-        </HBox>
-    </bottom>
-</BorderPane>
-
-
+<Pane fx:id="paneContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.balatro_lite.MainViewController">
+   <children>
+      <ImageView fx:id="imgMainBackground" fitHeight="1080.0" fitWidth="1920.0" visible="true">
+         <image>
+            <Image url="@image/BalaMainBackground.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgJokerThoughtBubble" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaJokerThoughtBubble.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgBigBlindCurrent" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaBigBlindCurrent.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgBigBlindDefeated" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaBigBlindDefeated.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgBigBlindUpcoming" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaBigBlindUpcoming.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgDiscard" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaDiscard.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgPlayHand" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaPlayHand.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgShopSign" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaShopSign.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgSmallBlindCurrent" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaSmallBlindCurrent.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgSmallBlindDefeated" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaSmallBlindDefeated.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgSortHandPane" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaSortHandPane.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheClubCurrent" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheClubCurrent.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheClubUpcoming" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheClubUpcoming.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheGoadCurrent" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheGoadCurrent.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheGoadUpcoming" fitHeight="1080.0" fitWidth="1920.0">
+         <image>
+            <Image url="@image/BalaTheGoadUpcoming.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheHeadCurrent" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheHeadCurrent.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheHeadUpcoming" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheHeadUpcoming.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheManacleCurrent" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheManacleCurrent.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheManacleUpcoming" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheManacleUpcoming.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgThePsychicCurrent" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaThePsychicCurrent.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgSmallBlindGameScore" fitHeight="1080.0" fitWidth="1920.0" layoutX="1.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@image/BalaSmallBlindGameScore.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgBossBlindGameScore" fitHeight="1092.0" fitWidth="1940.0" layoutX="1.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@image/BalaBossBlindGameScore.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgBigBlindGameScore" fitHeight="1122.0" fitWidth="1920.0" layoutX="4.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true" visible="false" x="-3.0">
+         <image>
+            <Image url="@image/BalaBigBlindGameScore.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgThePsychicUpcoming" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaThePsychicUpcoming.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheWindowCurrent" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheWindowCurrent.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgTheWindowUpcoming" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaTheWindowUpcoming.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgShopPane" fitHeight="1080.0" fitWidth="1920.0" visible="false">
+         <image>
+            <Image url="@image/BalaShopPane.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="lblChips" alignment="CENTER_RIGHT" layoutX="134.0" layoutY="602.0" prefHeight="55.0" prefWidth="150.0" textAlignment="RIGHT" textFill="WHITE">
+         <font>
+            <Font name="balatro Regular" size="50.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblMult" layoutX="351.0" layoutY="602.0" prefHeight="55.0" prefWidth="131.0" textAlignment="RIGHT" textFill="WHITE">
+         <font>
+            <Font name="balatro Regular" size="50.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblRoundScore" alignment="CENTER" layoutX="318.0" layoutY="404.0" prefHeight="52.0" prefWidth="109.0" text="0" textFill="WHITE">
+         <font>
+            <Font name="balatro Regular" size="45.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblHandsCounter" layoutX="318.0" layoutY="742.0" prefHeight="52.0" prefWidth="27.0" text="3" textFill="#007bff">
+         <font>
+            <Font name="balatro Regular" size="40.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblDiscardsCounter" layoutX="443.0" layoutY="742.0" prefHeight="52.0" prefWidth="27.0" text="3" textFill="#ff4c40">
+         <font>
+            <Font name="balatro Regular" size="40.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblRunInfo" alignment="CENTER" contentDisplay="CENTER" layoutX="153.0" layoutY="829.0" prefHeight="77.0" prefWidth="81.0" text="Main Menu" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+         <font>
+            <Font name="balatro Regular" size="30.0" />
+         </font>
+      </Label>
+      <HBox fx:id="hboxShopCardDeck" alignment="CENTER" layoutX="867.0" layoutY="410.0" prefHeight="236.0" prefWidth="597.0">
+         <children>
+            <ImageView fx:id="imgShopCard1" fitHeight="239.0" fitWidth="173.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fx:id="imgShopCard2" fitHeight="239.0" fitWidth="173.0" layoutX="222.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ImageView>
+         </children></HBox>
+      <HBox fx:id="hboxHand" layoutX="569.0" layoutY="673.0" prefHeight="206.0" prefWidth="945.0" spacing="5.0" visible="false">
+         <children>
+            <ImageView fx:id="imgHandCard1" fitHeight="163.0" fitWidth="110.0" layoutX="145.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHandCard2" fitHeight="163.0" fitWidth="110.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHandCard3" fitHeight="163.0" fitWidth="110.0" layoutX="145.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHandCard4" fitHeight="163.0" fitWidth="110.0" layoutX="280.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHandCard5" fitHeight="163.0" fitWidth="110.0" layoutX="415.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHandCard6" fitHeight="163.0" fitWidth="110.0" layoutX="550.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHandCard7" fitHeight="163.0" fitWidth="110.0" layoutX="685.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHandCard8" fitHeight="163.0" fitWidth="110.0" layoutX="820.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+         </children></HBox>
+      <Label fx:id="lblCurrentAnte" layoutX="300.0" layoutY="980.0" prefHeight="52.0" prefWidth="27.0" text="1" textFill="#ffb900">
+         <font>
+            <Font name="balatro Regular" size="40.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblRound" alignment="CENTER" contentDisplay="CENTER" layoutX="357.0" layoutY="968.0" maxHeight="9999.0" maxWidth="9999.0" prefHeight="77.0" prefWidth="200.0" text="0" textAlignment="CENTER" textFill="#ffb900" textOverrun="WORD_ELLIPSIS">
+         <font>
+            <Font name="balatro Regular" size="40.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblAnteCap" layoutX="331.0" layoutY="980.0" prefHeight="52.0" prefWidth="40.0" text="/ 4" textFill="WHITE">
+         <font>
+            <Font name="balatro Regular" size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblCashOnHand" alignment="CENTER" layoutX="324.0" layoutY="845.0" prefHeight="55.0" prefWidth="131.0" text="\$5" textAlignment="CENTER" textFill="#ffb900">
+         <font>
+            <Font name="balatro Regular" size="50.0" />
+         </font>
+      </Label>
+      <HBox fx:id="hboxJokersPane" alignment="CENTER" layoutX="571.0" layoutY="77.0" prefHeight="175.0" prefWidth="752.0">
+         <children>
+            <ImageView fx:id="imgJoker1" fitHeight="178.0" fitWidth="146.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fx:id="imgJoker2" fitHeight="178.0" fitWidth="146.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fx:id="imgJoker3" fitHeight="178.0" fitWidth="146.0" layoutX="156.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+      </HBox>
+      <Label fx:id="lblJokerSpeech" alignment="CENTER" layoutX="1471.0" layoutY="94.0" prefHeight="138.0" prefWidth="340.0" text="Joker Speech Bubble" wrapText="true">
+         <font>
+            <Font name="balatro Regular" size="26.0" />
+         </font>
+         <padding>
+            <Insets bottom="20.0" top="20.0" />
+         </padding>
+      </Label>
+      <Button fx:id="btnMainMenu" alignment="CENTER" contentDisplay="CENTER" layoutX="131.0" layoutY="794.0" mnemonicParsing="false" onAction="#handleMainMenu" prefHeight="150.0" prefWidth="123.0" style="-fx-background-color: transparent;" textAlignment="CENTER" />
+      <Button fx:id="btnNextRound" layoutX="595.0" layoutY="392.0" mnemonicParsing="false" onAction="#handleNextRound" prefHeight="125.0" prefWidth="230.0" style="-fx-background-color: transparent;" />
+      <Button fx:id="btnReroll" layoutX="595.0" layoutY="524.0" mnemonicParsing="false" onAction="#handleRerollShop" prefHeight="138.0" prefWidth="230.0" style="-fx-background-color: transparent;" />
+      <Label fx:id="lblCurrentDeckCounter" layoutX="1653.0" layoutY="1020.0" prefHeight="30.0" prefWidth="40.0" text="52" textFill="WHITE">
+         <font>
+            <Font name="balatro Regular" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblJokersInHand" alignment="CENTER" layoutX="556.0" layoutY="283.0" prefHeight="30.0" prefWidth="55.0" text="0/3" textFill="WHITE">
+         <font>
+            <Font name="balatro Regular" size="18.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnPlayHand" layoutX="736.0" layoutY="894.0" mnemonicParsing="false" onAction="#handlePlayHand" prefHeight="125.0" prefWidth="205.0" style="-fx-background-color: transparent;" />
+      <Button fx:id="btnSortRank" layoutX="967.0" layoutY="938.0" mnemonicParsing="false" onAction="#handleSortByRank" prefHeight="65.0" prefWidth="74.0" style="-fx-background-color: transparent;" />
+      <Button fx:id="btnDiscard" layoutX="1148.0" layoutY="894.0" mnemonicParsing="false" onAction="#handleDiscard" prefHeight="125.0" prefWidth="205.0" style="-fx-background-color: transparent;" />
+      <Button fx:id="btnSortSuit" layoutX="1047.0" layoutY="938.0" mnemonicParsing="false" onAction="#handleSortBySuit" prefHeight="65.0" prefWidth="74.0" style="-fx-background-color: transparent;" />
+      <Button fx:id="btnSelectSmallBlind" layoutX="595.0" layoutY="341.0" mnemonicParsing="false" onAction="#showGameScreen" prefHeight="52.0" prefWidth="223.0" style="-fx-background-color: transparent;" />
+      <Button fx:id="btnSelectBigBlind" layoutX="936.0" layoutY="341.0" mnemonicParsing="false" onAction="#showGameScreen" prefHeight="52.0" prefWidth="223.0" style="-fx-background-color: transparent;" />
+      <Button fx:id="btnSelectBossBlind" layoutX="1274.0" layoutY="341.0" mnemonicParsing="false" onAction="#showGameScreen" prefHeight="52.0" prefWidth="223.0" style="-fx-background-color: transparent;" />
+      <Label fx:id="lblSmallBlindScore" layoutX="700.0" layoutY="640.0" prefHeight="52.0" prefWidth="74.0" text="0" textFill="#ff4c40" visible="false">
+         <font>
+            <Font name="balatro Regular" size="40.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblBigBlindScore" layoutX="1040.0" layoutY="700.0" prefHeight="52.0" prefWidth="74.0" text="0" textFill="#ff4c40">
+         <font>
+            <Font name="balatro Regular" size="40.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblBossBlindScore" layoutX="1360.0" layoutY="760.0" prefHeight="52.0" prefWidth="74.0" text="0" textFill="#ff4c40">
+         <font>
+            <Font name="balatro Regular" size="40.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblHandType" alignment="CENTER" contentDisplay="CENTER" layoutX="137.0" layoutY="503.0" prefHeight="65.0" prefWidth="364.0" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="balatro Regular" size="50.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblBlindHealth" layoutX="365.0" layoutY="212.0" prefHeight="45.0" prefWidth="123.0" text="300" textFill="#ff4c40">
+         <font>
+            <Font name="balatro Regular" size="40.0" />
+         </font>
+      </Label>
+      <HBox fx:id="hboxShopCardDeck2" alignment="CENTER" layoutX="631.0" layoutY="753.0" prefHeight="239.0" prefWidth="816.0">
+         <children>
+            <ImageView fx:id="imgShopCard3" fitHeight="239.0" fitWidth="173.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fx:id="imgShopCard4" fitHeight="239.0" fitWidth="173.0" layoutX="222.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fx:id="imgShopCard5" fitHeight="239.0" fitWidth="173.0" layoutX="235.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgShopCard6" fitHeight="239.0" fitWidth="173.0" layoutX="515.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </HBox>
+   </children>
+</Pane>
