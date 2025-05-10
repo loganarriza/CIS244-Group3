@@ -15,11 +15,9 @@
             </image>
         </ImageView>
 
-        <Button fx:id="btnPlay" layoutX="551.0" layoutY="824.0" onAction="#handlePlay" prefHeight="127.0" prefWidth="292.0" style="-fx-background-color: transparent; -fx-font-size: 24px; -fx-text-fill: white;" />
+        <Button fx:id="btnPlay" layoutX="698.0" layoutY="823.0" onAction="#handlePlay" prefHeight="127.0" prefWidth="292.0" style="-fx-background-color: transparent; -fx-font-size: 24px; -fx-text-fill: white;" />
 
-        <Button fx:id="btnQuit" layoutX="853.0" layoutY="832.0" onAction="#handleQuit" prefHeight="109.0" prefWidth="213.0" style="-fx-background-color: transparent; -fx-font-size: 24px; -fx-text-fill: white;" />
-
-        <Button fx:id="btnCollection" layoutX="1078.0" layoutY="826.0" onAction="#handleCollection" prefHeight="121.0" prefWidth="292.0" style="-fx-background-color: transparent; -fx-font-size: 24px; -fx-text-fill: white;" />
+        <Button fx:id="btnQuit" layoutX="997.0" layoutY="832.0" onAction="#handleQuit" prefHeight="109.0" prefWidth="213.0" style="-fx-background-color: transparent; -fx-font-size: 24px; -fx-text-fill: white;" />
         <Button fx:id="btnRegister" layoutX="137.0" layoutY="885.0" onAction="#handleRegister" prefHeight="61.0" prefWidth="160.0" style="-fx-background-color: transparent; -fx-font-size: 20px; -fx-text-fill: white;" />
 
     </children>
